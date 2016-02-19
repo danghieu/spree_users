@@ -1,7 +1,7 @@
 module Spree
-	module Api
-	class LogUserController < Spree::Api::BaseController
-		before_action :authenticate_user, :except => [:login]
+  module Api
+    class LogUserController < Spree::Api::BaseController
+      before_action :authenticate_user, :except => [:login]
       def login
         @user = Spree.user_class.find_for_database_authentication(:email => params[:email])
         p @user
@@ -37,6 +37,16 @@ module Spree
           render "spree/api/logger/log", status: 404
         end
       end
-	end
-end
+
+      def check
+        @user = Spree.user_class.find_for_database_authentication(:email => params[:email])
+        if @user
+          @status = [{ "messages" => "true"}]
+        else
+          @status = [{ "messages" => "false"}]
+        end
+        render "spree/api/logger/log"
+      end
+    end
+  end
 end
