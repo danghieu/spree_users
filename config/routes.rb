@@ -5,6 +5,7 @@ Spree::Core::Engine.routes.draw do
   
   
   namespace :api do
+    resources :users
   	post "/login" => "/spree/api/log_user#login"
   	post "/logout" => "/spree/api/log_user#logout"
   	put "/users/:id/change_password" => "/spree/api/users#change_password"

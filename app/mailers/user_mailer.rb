@@ -18,8 +18,8 @@ class UserMailer < ApplicationMailer
   #
   def forgot_password_email(user)
     @user = user
-    @url = "http://sheltered-stream-93214.herokuapp.com/#/main/reset_password?id=#{user.id}&token=#{user.reset_password_token}"
-
+    # @url = "http://sheltered-stream-93214.herokuapp.com/#/main/reset_password?id=#{user.id}&token=#{user.reset_password_token}"
+    @url = "http://localhost:9000/#/main/reset_password"
     mail to: user.email
   end
 

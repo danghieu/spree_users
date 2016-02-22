@@ -29,6 +29,30 @@ Spree::Api::UsersController.class_eval do
   end
 
   def update
+    @user = Spree::User.find(params[:id])
+    authorize! :update, @user
+    p user_update_params
+
+    # @user.first_name = user_update_params[:first_name]
+    # @user.last_name = user_update_params[:last_name]
+    # @user.birth_day = user_update_params[:birth_day]
+    # @user.email = user_update_params[:email]
+
+    if @user.update(user_update_params)
+      @status = [ { "messages" => "Update Information Successful"}]
+      render "spree/api/logger/log", status: 200
+    else
+      @status = [ { "messages" => "Update Information Successful"}]
+      render "spree/api/logger/log", status: 404
+    end
+
+    # if @user.save
+    #   @status = [ { "messages" => "Update Information Successful"}]
+    #   render "spree/api/logger/log", status: 200
+    # else
+    #   @status = [ { "messages" => "Update Information Successful"}]
+    #   render "spree/api/logger/log", status: 404
+    # end
 
   end
 
@@ -77,7 +101,7 @@ Spree::Api::UsersController.class_eval do
   end
 
   def user_update_params
-    params.require(:user).permit(:first_name, :last_name, :birthday)
+    params.require(:user).permit(:first_name, :last_name, :birth_day, :email)
   end
 
   def password_params
