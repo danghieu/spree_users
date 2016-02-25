@@ -4,9 +4,6 @@ Spree::Api::UsersController.class_eval do
   def create
     @user = Spree.user_class.new(user_params)
     if @user.save!
-      # Mailer::UserMailer.welcome_email.deliver
-      # TestMailer.testmailer.deliver
-      
       sign_in(@user)
       #@order = find_cart_order_login(@user)
       #unless @order
@@ -14,11 +11,17 @@ Spree::Api::UsersController.class_eval do
       #end
       @user.generate_spree_api_key!
       UserMailer.welcome_email(@user).deliver
-
       render "spree/api/users/show", status: 201
     else
       invalid_resource!(@user)
     end
+
+  end
+
+  def edit
+    @user = current_api_user
+
+    render "spree/api/users/edit", status: 200
 
   end
 
@@ -29,48 +32,63 @@ Spree::Api::UsersController.class_eval do
   end
 
   def update
-    @user = Spree::User.find(params[:id])
+    # @user = Spree::User.find(params[:id])
+    @user = current_api_user 
     authorize! :update, @user
-    p user_update_params
 
-    # @user.first_name = user_update_params[:first_name]
-    # @user.last_name = user_update_params[:last_name]
-    # @user.birth_day = user_update_params[:birth_day]
-    # @user.email = user_update_params[:email]
+    if params[:password].present?
 
-    if @user.update(user_update_params)
-      @status = [ { "messages" => "Update Information Successful"}]
-      render "spree/api/logger/log", status: 200
-    else
-      @status = [ { "messages" => "Update Information Successful"}]
-      render "spree/api/logger/log", status: 404
+      if @user.change_password(password_params)
+        @status = [ { "messages" => "Your password was successfully updated"}]
+      else
+        @status = [ { "messages" => "Your password was incorect"}]
+      end
+
+    elsif params[:user].present?
+
+      if  @user.update(user_information_params)
+        @status = [ { "messages" => "Your information was successfully updated"}]
+      else
+        @status = [ { "messages" => "Your information was not successfully updated"}]
+      end
+
     end
 
-    # if @user.save
-    #   @status = [ { "messages" => "Update Information Successful"}]
-    #   render "spree/api/logger/log", status: 200
-    # else
-    #   @status = [ { "messages" => "Update Information Successful"}]
-    #   render "spree/api/logger/log", status: 404
+    render "spree/api/logger/log"
+      
+
+    # @user.update(user_information_params)
+    # @status = [ { "messages" => "Your information was successfully updated"}]
+
+    # if params[:password].present?
+    #     if @user.valid_password?(password_params[:old])
+    #       @user.password = password_params[:new] 
+    #       @user.save
+    #       @status = [ { "messages" => "Your information was successfully updated"}]
+    #     else
+    #       @status = [ { "messages" => "Your password was incorect"}]
+    #     end
     # end
 
+    # render "spree/api/logger/log"
+
   end
 
-  def change_password
-    @user = current_api_user
-    authorize! :update, @user
+  # def change_password
+  #   @user = current_api_user
+  #   authorize! :update, @user
 
-    if @user.valid_password?(password_params[:old])
-      @user.password = password_params[:new]
-      @user.save
-      p @user.password
-      @status = [ { "messages" => "Update Password Successful"}]
-      render "spree/api/logger/log", status: 200
-    else
-      @status = [ { "messages" => "Password Is Not Right"}]
-      render "spree/api/logger/log", status: 404
-    end
-  end
+  #   if @user.valid_password?(password_params[:old])
+  #     @user.password = password_params[:new]
+  #     @user.save
+  #     p @user.password
+  #     @status = [ { "messages" => "Update Password Successful"}]
+  #     render "spree/api/logger/log", status: 200
+  #   else
+  #     @status = [ { "messages" => "Password Is Not Right"}]
+  #     render "spree/api/logger/log", status: 404
+  #   end
+  # end
 
   def forgot_password
     @user = Spree::User.find_by!(email: params[:email])
@@ -100,7 +118,7 @@ Spree::Api::UsersController.class_eval do
     params.require(:user).permit(:email, :password)
   end
 
-  def user_update_params
+  def user_information_params
     params.require(:user).permit(:first_name, :last_name, :birth_day, :email)
   end
 

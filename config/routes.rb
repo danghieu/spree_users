@@ -5,7 +5,8 @@ Spree::Core::Engine.routes.draw do
   
   
   namespace :api do
-    resources :users
+    resources :users 
+
   	post "/login" => "/spree/api/log_user#login"
   	post "/logout" => "/spree/api/log_user#logout"
   	put "/users/:id/change_password" => "/spree/api/users#change_password"
@@ -15,5 +16,15 @@ Spree::Core::Engine.routes.draw do
   	
     post "/likes" => "/spree/api/likes#create"
     delete "/likes" => "/spree/api/likes#destroy"
+
+    # namespace :users do
+    #   get "edit_user" => "/spree/api/users#edit"
+    #   put "update" => "/spree/api/users#update"
+    # end
+
+    get "edit_user" => "/spree/api/users#edit"
+    put "update_user" => "/spree/api/users#update"
+
+    
   end
 end
