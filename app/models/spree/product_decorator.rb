@@ -5,11 +5,15 @@ Spree::Product.class_eval do
   accepts_nested_attributes_for :likes,
              :reject_if => :all_blank,
              :allow_destroy => true
-        accepts_nested_attributes_for :users
+  accepts_nested_attributes_for :users
 
 
-        def current_user_like?(user_id)
+  def current_user_like?(user_id)
   	return false if user_id.blank?
   	self.likes.pluck(:user_id).include?(user_id)
   end
+
+  def approved_comments
+      Dish::Comment.where(product_id: self.id, status: 1)
+    end
 end

@@ -17,6 +17,10 @@ Spree::User.class_eval do
       	end
     end
 
+    def approved_comments
+      Dish::Comment.where(user_id: self.id, status: 1)
+    end
+
 
         
 end

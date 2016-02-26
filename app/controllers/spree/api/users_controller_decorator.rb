@@ -55,22 +55,6 @@ Spree::Api::UsersController.class_eval do
     end
 
     render "spree/api/logger/log"
-      
-
-    # @user.update(user_information_params)
-    # @status = [ { "messages" => "Your information was successfully updated"}]
-
-    # if params[:password].present?
-    #     if @user.valid_password?(password_params[:old])
-    #       @user.password = password_params[:new] 
-    #       @user.save
-    #       @status = [ { "messages" => "Your information was successfully updated"}]
-    #     else
-    #       @status = [ { "messages" => "Your password was incorect"}]
-    #     end
-    # end
-
-    # render "spree/api/logger/log"
 
   end
 
